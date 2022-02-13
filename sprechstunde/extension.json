@@ -1,0 +1,67 @@
+{
+  "name": "Sprechstunde",
+  "uniqid": "ext.zwiebelgasse.sprechstunde",
+  "version": "1",
+
+  "requiredVersion": "1.4.1",
+
+  "menu": {
+    "categorie": "1",
+    "icon": "fas fa-people-arrows",
+    "params": ""
+  },
+
+  "adminGroupName": "Admin_Ext_Sprechstunde",
+  "aclGroupName": "ext_sprechstunde",
+
+
+  "submenu": [
+    {
+      "title": "Kalender",
+      "icon": "fas fa-people-arrows",
+      "url": {
+        "page": "ext_sprechstunde",
+        "params": {
+          "view": "default"
+        }
+      },
+      "hidden": false
+    },
+    {
+      "title": "Planer",
+      "icon": "fa fa-calendar",
+      "url": {
+        "page": "ext_sprechstunde",
+        "params": {
+          "view": "planer"
+        }
+      },
+      "hidden": false
+    },
+    {
+      "title": "Einstellungen",
+      "icon": "fa fa-cogs",
+      "admin": true,
+      "url": {
+        "page": "ext_sprechstunde",
+        "params": {
+          "view": "default",
+          "admin": "true"
+        }
+      }
+    },
+    {
+      "title": "ACL",
+      "icon": "fa fa-user-shield",
+      "admin": true,
+      "url": {
+        "page": "ext_sprechstunde",
+        "params": {
+          "view": "acl",
+          "admin": "true"
+        }
+      }
+    }
+  ]
+
+}
