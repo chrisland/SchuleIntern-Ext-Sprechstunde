@@ -30,6 +30,14 @@ class cancelSlot extends AbstractRest {
             ];
         }
 
+        $acl = $this->getAcl();
+        if ((int)$acl['rights']['delete'] !== 1) {
+            return [
+                'error' => true,
+                'msg' => 'Kein Zugriff'
+            ];
+        }
+
         $data = DB::getDB()->query_first("SELECT id, user_id FROM ext_sprechstunde_slots WHERE id = ".(int)$input['id'] , true);
 
         if ( !$data ) {

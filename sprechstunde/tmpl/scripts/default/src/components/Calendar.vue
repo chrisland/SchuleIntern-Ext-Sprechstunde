@@ -45,9 +45,9 @@
                 <div class="padding-t-m padding-b-m">
                   {{slot.title}}
                 </div>
-                <User v-bind:data="slot.user"></User>
+                <User v-if="slot.user_id != userSelf.id" v-bind:data="slot.user"></User>
 
-                <div v-if="slot.date" class="si-box si-box-green margin-t-m">
+                <div v-if="slot.date" class="si-box si-box-green">
                   <h4><i class="far fa-calendar-check margin-r-s"></i> Termin</h4>
                   <User v-bind:data="slot.date.user"></User>
                   <div v-if="slot.date.info" class="padding-t-m">
@@ -56,7 +56,7 @@
                 </div>
 
                 <div v-else class="text-right padding-t-s">
-                  <button class="si-btn"
+                  <button v-if="slot.user_id != userSelf.id" class="si-btn"
                             v-on:click.stop="openForm(day.day, slot)">
                     <i class="fa fa-plus"></i> Buchen
                   </button>
@@ -95,7 +95,8 @@ export default {
     plan: Array,
     acl: Object,
     room: String,
-    showDays: Array
+    showDays: Array,
+    userSelf: Array
   },
   data() {
     return {

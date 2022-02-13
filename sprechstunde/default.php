@@ -17,8 +17,15 @@ class extSprechstundeDefault extends AbstractPage {
         //$_request = $this->getRequest();
 
         //print_r($_request);
+        $acl = $this->getAcl();
+        if ((int)$acl['rights']['read'] !== 1) {
+            new errorPage('Kein Zugriff');
+        }
+        //print_r( $acl );
 
-        //print_r( $this->getAcl() );
+        $user = DB::getSession()->getUser();
+
+        //print_r($user->getUserTyp(true));
 
         $showDays = array(
             'Mo' => DB::getSettings()->getValue('extSprechstunde-day-mo') || 0,
@@ -30,16 +37,25 @@ class extSprechstundeDefault extends AbstractPage {
             'So' => DB::getSettings()->getValue('extSprechstunde-day-so') || 0,
         );
 
+        $info = DB::getSettings()->getValue('extSprechstunde-calendar-info-head');
 
 		$this->render([
 			"tmpl" => "default",
             "scripts" => [
                 PATH_EXTENSION.'tmpl/scripts/default/dist/main.js'
             ],
+            "vars" => [
+                "info" => $info
+            ],
             "data" => [
                 "apiURL" => "rest.php/sprechstunde",
                 "showDays" => $showDays,
-                "acl" => $this->getAcl()['rights']
+                "acl" => $acl['rights'],
+                "userSelf" => [
+                    "typ" => $user->getUserTyp(true),
+                    "id" => $user->getUserID()
+                ]
+
 		    ]
         ]);
 

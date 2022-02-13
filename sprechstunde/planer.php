@@ -20,6 +20,11 @@ class extSprechstundePlaner extends AbstractPage {
 
         //print_r( $this->getAcl() );
 
+        $acl = $this->getAcl();
+        if ((int)$acl['rights']['read'] !== 1) {
+            new errorPage('Kein Zugriff');
+        }
+
         include_once PATH_EXTENSION . 'models' . DS . 'Helpers.class.php';
 
         $hourStart = DateTime::createFromFormat('H:i', extSprechstundeModelHelpers::getCalenderHourStart());
@@ -37,15 +42,20 @@ class extSprechstundePlaner extends AbstractPage {
         );
 
 
+        $info = DB::getSettings()->getValue('extSprechstunde-planer-info-head');
+
 		$this->render([
 			"tmpl" => "default",
             "scripts" => [
                 PATH_EXTENSION.'tmpl/scripts/planer/dist/main.js'
             ],
+            "vars" => [
+                "info" => $info
+            ],
             "data" => [
                 "apiURL" => "rest.php/sprechstunde",
                 "showDays" => $showDays,
-                "acl" => $this->getAcl()['rights'],
+                "acl" => $acl['rights'],
                 "formData" => [
                     "hourStart" => $hourStart,
                     "hourCount" => $hourCount

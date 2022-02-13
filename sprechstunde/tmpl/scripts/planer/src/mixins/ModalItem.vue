@@ -23,8 +23,10 @@
           </tbody>
         </table>
 
-        <button v-if="item.createdSelf && !cancelSecond " @click="cancelItemFirst" class="si-btn"><i class="fa fa-save"></i> Entfernen</button>
-        <button v-if="item.createdSelf && cancelSecond" @click="cancelItemSecond" class="si-btn si-btn-red"><i class="fa fa-save"></i> Wirklich Entfernen?</button>
+        <span v-if="acl.delete == 1" >
+          <button v-if="item.createdSelf && !cancelSecond " @click="cancelItemFirst" class="si-btn"><i class="fa fa-save"></i> Entfernen</button>
+          <button v-if="item.createdSelf && cancelSecond" @click="cancelItemSecond" class="si-btn si-btn-red"><i class="fa fa-save"></i> Wirklich Entfernen?</button>
+        </span>
 
       </div>
     </div>
@@ -47,7 +49,8 @@ export default {
     };
   },
   props: {
-    item: Object
+    item: Object,
+    acl: Object
   },
   created: function () {
 

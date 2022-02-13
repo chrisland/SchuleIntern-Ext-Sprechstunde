@@ -25,7 +25,8 @@
           "view": "default"
         }
       },
-      "hidden": false
+      "hidden": false,
+      "acl": ["isTeacher", "isEltern", "isPupil", "isNone"]
     },
     {
       "title": "Planer",
@@ -36,7 +37,8 @@
           "view": "planer"
         }
       },
-      "hidden": false
+      "hidden": false,
+      "acl": ["isTeacher"]
     },
     {
       "title": "Einstellungen",

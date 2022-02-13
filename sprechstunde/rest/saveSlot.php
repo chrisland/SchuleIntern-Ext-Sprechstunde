@@ -23,6 +23,15 @@ class saveSlot extends AbstractRest {
             ];
         }
 
+        $acl = $this->getAcl();
+        if ((int)$acl['rights']['read'] !== 1) {
+            return [
+                'error' => true,
+                'msg' => 'Kein Zugriff'
+            ];
+        }
+
+
         $time = DateTime::createFromFormat('H:i', $input['timeHour'].':'.$input['timeMinute'] );
         $time_str = $time->format('H:i');
 

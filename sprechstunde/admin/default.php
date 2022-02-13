@@ -80,14 +80,27 @@ class extSprechstundeAdminDefault extends AbstractPage {
                 'name' => "extSprechstunde-time-start",
                 'typ' => "STRING",
                 'title' => "Uhrzeit - Start",
-                'desc' => ""
+                'desc' => "Format: 00:00"
             ),
             array(
                 'name' => "extSprechstunde-time-end",
                 'typ' => "STRING",
                 'title' => "Uhrzeit - Ende",
+                'desc' => "Format: 00:00"
+            ),
+            array(
+                'name' => "extSprechstunde-calendar-info-head",
+                'typ' => "STRING",
+                'title' => "Kalender - Hinweis",
                 'desc' => ""
             ),
+            array(
+                'name' => "extSprechstunde-planer-info-head",
+                'typ' => "STRING",
+                'title' => "Planer - Hinweis",
+                'desc' => ""
+            )
+
 		);
 		return $settings;
 

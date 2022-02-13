@@ -4,9 +4,7 @@
     <Error v-bind:error="error"></Error>
     <Spinner v-bind:loading="loading"></Spinner>
 
-    <Calendar v-bind:plan="plan" v-bind:showDays="showDays" v-bind:acl="acl" ></Calendar>
-
-    {{acl}}
+    <Calendar v-bind:plan="plan" v-bind:showDays="showDays" v-bind:acl="acl" v-bind:userSelf="userSelf" ></Calendar>
 
   </div>
 </template>
@@ -33,7 +31,8 @@ export default {
       plan: [],
 
       acl: globals.acl,
-      showDays: globals.showDays
+      showDays: globals.showDays,
+      userSelf: globals.userSelf
 
     };
   },

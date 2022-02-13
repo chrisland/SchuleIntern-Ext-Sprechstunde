@@ -45,13 +45,25 @@ class getWeek extends AbstractRest {
         $days = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 
 
+        $user = DB::getSession()->getUser();
 
+        if ( $user->isPupil() ) {
+            $teachers = $this->getMyKlassenLehrer();
+            $slots = extSprechstundeModelSlot::getByTeachers($teachers);
+        }
 
+        if ( $user->isEltern() ) {
+            $teachers = $this->getMyKlassenLehrer();
+            $slots = extSprechstundeModelSlot::getByTeachers($teachers);
+        }
 
+        if ( $user->isTeacher() ) {
+            $slots = extSprechstundeModelSlot::getAllByUser($user->getUserID());
+        }
+        if ( $user->isAnyAdmin() ) {
+            //$slots = extSprechstundeModelSlot::getAll();
+        }
 
-
-        // TODO: nur für meine Kinder:
-        $slots = extSprechstundeModelSlot::getAll();
 
         $dates = extSprechstundeModelDate::getAllByWeek((int)$input['von']);
 
@@ -87,7 +99,16 @@ class getWeek extends AbstractRest {
 
                             foreach ($dates as $date) {
                                 if ($slot->getID() == $date->getSlotID()) {
-                                    $foo['date'] = $date->getCollection();
+
+
+                                    if ( $user->isPupil() || $user->isEltern() ) {
+                                        if ($userID == $date->getUserID()) {
+                                            $foo['date'] = $date->getCollection();
+                                        }
+
+                                    } else if ($user->isTeacher()) {
+                                        $foo['date'] = $date->getCollection();
+                                    }
                                 }
                             }
 
@@ -132,6 +153,27 @@ class getWeek extends AbstractRest {
 
 	}
 
+    /**
+     *
+     * TODO: SEHR LANGSAM !!!!
+     *
+     * @return array
+     */
+    private function getMyKlassenLehrer() {
+        $ret = [];
+        $klassen = klasse::getMyKlassen();
+        if (count($klassen) > 0) {
+            foreach($klassen as $klasse) {
+                $lehrers = $klasse->getKlassenlehrer();
+                foreach($lehrers as $lehrer) {
+                    //echo $lehrer->getUserID().'-';
+                    $ret[$lehrer->getUserID()] = true;
+                }
+            }
+        }
+        return $ret;
+
+    }
 
 	/**
 	 * Set Allowed Request Method

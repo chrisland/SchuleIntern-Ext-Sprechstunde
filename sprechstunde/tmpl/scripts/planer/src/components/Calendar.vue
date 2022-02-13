@@ -1,14 +1,14 @@
 <template>
   <div>
 
-    <span v-if="acl.write" >
+    <span v-if="acl.write == 1" >
       <button class="si-btn"
               v-on:click="openForm()">
         <i class="fa fa-plus"></i> Neuen Slot Hinzufügen
       </button>
     </span>
 
-    <table class="si-table">
+    <table v-if="acl.read == 1" class="si-table">
       <thead>
       <tr>
         <td width="10%">Stunde</td>
@@ -42,7 +42,7 @@
 
 
     <ModalForm v-bind:showDays="showDays"  v-bind:formData="formData" ></ModalForm>
-    <ModalItem ></ModalItem>
+    <ModalItem v-bind:acl="acl"></ModalItem>
 
   </div>
 </template>

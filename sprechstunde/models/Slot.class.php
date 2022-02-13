@@ -110,6 +110,7 @@ class extSprechstundeModelSlot
         return $ret;
     }
 
+
     /**
      * @return Array[]
      */
@@ -122,6 +123,32 @@ class extSprechstundeModelSlot
         }
         return $ret;
     }
+
+    /**
+     * @return Array[]
+     */
+    public static function getByTeachers($teachers = array()) {
+
+        $ret =  [];
+        $where = '';
+        if ($teachers && count($teachers) > 0) {
+            foreach($teachers as $key => $teacher) {
+                if ($where) {
+                    $where .= ' OR ';
+                }
+                $where .= 'user_id = '.(int)$key;
+            }
+        } else {
+            return false;
+        }
+
+        $dataSQL = DB::getDB()->query("SELECT * FROM ext_sprechstunde_slots WHERE ".$where);
+        while ($data = DB::getDB()->fetch_array($dataSQL, true)) {
+            $ret[] = new self($data);
+        }
+        return $ret;
+    }
+
 
 
 
