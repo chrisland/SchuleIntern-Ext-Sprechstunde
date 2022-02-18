@@ -6,8 +6,16 @@ class getWeek extends AbstractRest {
 
 	public function execute($input, $request) {
 
+        $acl = $this->getAcl();
+        if ((int)$acl['rights']['read'] !== 1 && (int)DB::getSession()->getUser()->isAnyAdmin() !== 1 ) {
+            return [
+                'error' => true,
+                'msg' => 'Kein Zugriff'
+            ];
+        }
 
-        $userID = DB::getSession()->getUser()->getUserID();
+        $user = DB::getSession()->getUser();
+        $userID = $user->getUserID();
         if (!$userID) {
             return [
                 'error' => true,
@@ -45,23 +53,27 @@ class getWeek extends AbstractRest {
         $days = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 
 
-        $user = DB::getSession()->getUser();
+
+        $slots = [];
 
         if ( $user->isPupil() ) {
             $teachers = $this->getMyKlassenLehrer();
-            $slots = extSprechstundeModelSlot::getByTeachers($teachers);
+            $slots = array_merge($slots, extSprechstundeModelSlot::getByTeachers($teachers, 'schueler'));
         }
 
         if ( $user->isEltern() ) {
             $teachers = $this->getMyKlassenLehrer();
-            $slots = extSprechstundeModelSlot::getByTeachers($teachers);
+            $slots = array_merge($slots, extSprechstundeModelSlot::getByTeachers($teachers, 'eltern'));
         }
 
-        if ( $user->isTeacher() ) {
-            $slots = extSprechstundeModelSlot::getAllByUser($user->getUserID());
-        }
-        if ( $user->isAnyAdmin() ) {
-            //$slots = extSprechstundeModelSlot::getAll();
+        //if ( $user->isTeacher() ) {
+            //$slots = array_merge($slots, extSprechstundeModelSlot::getAllByUser($user->getUserID()));
+        //}
+
+        if ( $input['admin'] && $user->isAnyAdmin() ) {
+            $slots = array_merge($slots, extSprechstundeModelSlot::getAll());
+        } else {
+            $slots = array_merge($slots, extSprechstundeModelSlot::getAllByUser($user->getUserID()));
         }
 
 
@@ -78,7 +90,7 @@ class getWeek extends AbstractRest {
             $hourInt = (int)( $hourArr[0].$hourArr[1]);
             $hourNextInt = $hourInt + 100;
 
-            for ($d = 0; $d < 5; $d++) {
+            for ($d = 0; $d < 7; $d++) {
 
                 if ( $showDays[$d] ) {
                     $day = (int)$input['von'] + ($d * 86400);
@@ -100,15 +112,21 @@ class getWeek extends AbstractRest {
                             foreach ($dates as $date) {
                                 if ($slot->getID() == $date->getSlotID()) {
 
-
                                     if ( $user->isPupil() || $user->isEltern() ) {
                                         if ($userID == $date->getUserID()) {
                                             $foo['date'] = $date->getCollection();
+                                        } else {
+                                            $foo['dateSet'] = true;
                                         }
 
                                     } else if ($user->isTeacher()) {
                                         $foo['date'] = $date->getCollection();
+
+                                    } else if ($user->isAnyAdmin()) {
+                                        $foo['date'] = $date->getCollection();
                                     }
+
+
                                 }
                             }
 

@@ -15,10 +15,12 @@ class extSprechstundeAdminAcl extends AbstractPage {
 
 		//$this->getRequest();
 		//$this->getAcl();
-		
-		if (!DB::getSession()->isAdmin()) {
-			new errorPage('Kein Zugriff');
-		}
+
+        $user = DB::getSession()->getUser();
+
+        if ( !$user->isAnyAdmin() ) {
+            new errorPage('Kein Zugriff');
+        }
 
 		$this->render([
 			"tmplHTML" => '<div class="box"><div class="box-body"><div id=app></div></div></div>',

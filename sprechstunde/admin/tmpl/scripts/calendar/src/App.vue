@@ -4,8 +4,7 @@
     <Error v-bind:error="error"></Error>
     <Spinner v-bind:loading="loading"></Spinner>
 
-    <Calendar v-bind:week="week" v-bind:slots="slots" v-bind:showDays="showDays" v-bind:acl="acl" v-bind:formData="formData" ></Calendar>
-
+    <Calendar v-bind:plan="plan" v-bind:showDays="showDays" v-bind:acl="acl" v-bind:userSelf="userSelf" ></Calendar>
 
   </div>
 </template>
@@ -29,13 +28,11 @@ export default {
 
       loading: false,
       error: false,
-
-      week: [],
-      slots: [],
+      plan: [],
 
       acl: globals.acl,
       showDays: globals.showDays,
-      formData: globals.formData
+      userSelf: globals.userSelf
 
     };
   },
@@ -49,7 +46,7 @@ export default {
       this.showFirstDayWeek = data.von;
       this.showLastDayWeek = data.bis;
 
-      this.loadWeek();
+      this.loadList();
 
     });
 
@@ -59,16 +56,17 @@ export default {
     var that = this;
 
 
-    EventBus.$on('item--cancel', data => {
+    EventBus.$on('form--cancel', data => {
 
-      if (!data.item.id || !data.item.createdBy) {
+      if (!data.unit.id
+          || !data.unit.createdBy) {
         console.log('missing');
         return false;
       }
 
       const formData = new FormData();
-      formData.append('id', data.item.id);
-      formData.append('createdBy', data.item.createdBy);
+      formData.append('id', data.unit.id);
+      formData.append('createdBy', data.unit.createdBy);
 
       this.loading = true;
       var that = this;
@@ -77,27 +75,26 @@ export default {
           'Content-Type': 'multipart/form-data'
         }
       })
-      .then(function(response){
-        if ( response.data ) {
-          if (response.data.error == false) {
+          .then(function(response){
+            if ( response.data ) {
+              if (response.data.error == false) {
 
-            that.loadSlot();
-            EventBus.$emit('modal-item--close');
+                EventBus.$emit('calender--reload', {});
 
-          } else {
-            that.error = ''+response.data.msg;
-          }
-        } else {
-          that.error = 'Fehler beim Laden. 01';
-        }
-      })
-      .catch(function(){
-        that.error = 'Fehler beim Laden. 02';
-      })
-      .finally(function () {
-        // always executed
-        that.loading = false;
-      });
+              } else {
+                that.error = ''+response.data.msg;
+              }
+            } else {
+              that.error = 'Fehler beim Laden. 01';
+            }
+          })
+          .catch(function(){
+            that.error = 'Fehler beim Laden. 02';
+          })
+          .finally(function () {
+            // always executed
+            that.loading = false;
+          });
 
 
 
@@ -106,29 +103,20 @@ export default {
 
     EventBus.$on('form--submit', data => {
 
-      if (!data.form.timeHour
-          || !data.form.timeMinute
-          || !data.form.title
-          || !data.form.day
-          || !data.form.duration
-          || !data.form.typ
-      ) {
+      if (!data.form.date
+          || !data.form.slot_id) {
         console.log('missing');
         return false;
       }
 
       const formData = new FormData();
-      formData.append('timeHour', data.form.timeHour);
-      formData.append('timeMinute', data.form.timeMinute);
-      formData.append('title', data.form.title);
-      formData.append('day', data.form.day);
-      formData.append('duration', data.form.duration);
-      formData.append('typ', JSON.stringify(data.form.typ) );
-      formData.append('id', data.form.id);
+      formData.append('date', data.form.date);
+      formData.append('slot_id', data.form.slot_id);
+      formData.append('info', data.form.info);
 
       this.loading = true;
       var that = this;
-      axios.post( this.apiURL+'/saveSlot', formData, {
+      axios.post( this.apiURL+'/saveDate', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -137,8 +125,7 @@ export default {
         if ( response.data ) {
           if (response.data.error == false) {
 
-            that.loadSlot();
-            EventBus.$emit('modal-form--close');
+            EventBus.$emit('calender--reload', {});
 
           } else {
             that.error = ''+response.data.msg;
@@ -162,46 +149,20 @@ export default {
   },
   methods: {
 
-    loadSlot: function () {
-
-      this.loading = true;
-      var that = this;
-      axios.get( this.apiURL+'/getSlots')
-          .then(function(response){
-            if ( response.data ) {
-              if (!response.data.error) {
-                that.slots = response.data;
-              } else {
-                that.error = ''+response.data.msg;
-              }
-            } else {
-              that.error = 'Fehler beim Laden. 01';
-            }
-          })
-          .catch(function(){
-            that.error = 'Fehler beim Laden. 02';
-          })
-          .finally(function () {
-            // always executed
-            that.loading = false;
-          });
-
-    },
-
-    loadWeek: function () {
+    loadList: function () {
 
       this.loading = true;
       var that = this;
       const params = new URLSearchParams();
       params.append('von', this.showFirstDayWeek);
+      params.append('admin', true);
       axios.get( this.apiURL+'/getWeek',{
             params: params
       })
       .then(function(response){
         if ( response.data ) {
           if (!response.data.error) {
-            that.week = response.data;
-            that.loadSlot();
+            that.plan = response.data;
           } else {
             that.error = ''+response.data.msg;
           }

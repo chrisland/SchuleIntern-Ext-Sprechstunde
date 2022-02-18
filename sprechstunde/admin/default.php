@@ -15,7 +15,13 @@ class extSprechstundeAdminDefault extends AbstractPage {
 
 		//$this->getRequest();
 		//$this->getAcl();
-		
+
+        $user = DB::getSession()->getUser();
+
+        if ( !$user->isAnyAdmin() ) {
+            new errorPage('Kein Zugriff');
+        }
+
 		$this->render([
 			"tmplHTML" => '<div class="box"><div class="box-body"><div id=app></div></div></div>',
 			"scripts" => [
@@ -90,13 +96,13 @@ class extSprechstundeAdminDefault extends AbstractPage {
             ),
             array(
                 'name' => "extSprechstunde-calendar-info-head",
-                'typ' => "STRING",
+                'typ' => "HTML",
                 'title' => "Kalender - Hinweis",
                 'desc' => ""
             ),
             array(
                 'name' => "extSprechstunde-planer-info-head",
-                'typ' => "STRING",
+                'typ' => "HTML",
                 'title' => "Planer - Hinweis",
                 'desc' => ""
             )

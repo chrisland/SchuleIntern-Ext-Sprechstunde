@@ -14,6 +14,15 @@
   "adminGroupName": "Admin_Ext_Sprechstunde",
   "aclGroupName": "ext_sprechstunde",
 
+  "widgets": [
+    {
+      "title": "Header Counter",
+      "uniqid": "sprechstunde.counter",
+      "position": "header",
+      "class": "extSprechstundeWidgetCounter",
+      "params": {}
+    }
+  ],
 
   "submenu": [
     {
@@ -29,6 +38,17 @@
       "acl": ["isTeacher", "isEltern", "isPupil", "isNone"]
     },
     {
+      "title": "Termine",
+      "icon": "fa fa-calendar-check",
+      "url": {
+        "page": "ext_sprechstunde",
+        "params": {
+          "view": "list"
+        }
+      },
+      "hidden": false
+    },
+    {
       "title": "Planer",
       "icon": "fa fa-calendar",
       "url": {
@@ -39,6 +59,18 @@
       },
       "hidden": false,
       "acl": ["isTeacher"]
+    },
+    {
+      "title": "ACL",
+      "icon": "fa fa-user-shield",
+      "admin": true,
+      "url": {
+        "page": "ext_sprechstunde",
+        "params": {
+          "view": "acl",
+          "admin": "true"
+        }
+      }
     },
     {
       "title": "Einstellungen",
@@ -53,17 +85,19 @@
       }
     },
     {
-      "title": "ACL",
-      "icon": "fa fa-user-shield",
+      "title": "Kalender",
+      "icon": "fa fa-calendar",
       "admin": true,
       "url": {
         "page": "ext_sprechstunde",
         "params": {
-          "view": "acl",
+          "view": "calendar",
           "admin": "true"
         }
       }
     }
+
+
   ]
 
 }

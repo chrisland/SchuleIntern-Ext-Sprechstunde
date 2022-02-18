@@ -61,6 +61,9 @@ class extSprechstundeModelSlot
     public function getDuration() {
         return $this->data['duration'];
     }
+    public function getTyp() {
+        return json_decode( $this->data['typ'] );
+    }
 
     public function getUser () {
         if (!$this->user && $this->data['user_id']) {
@@ -78,6 +81,7 @@ class extSprechstundeModelSlot
             "day" => $this->getDay(),
             "time" => 0,
             "duration" => $this->getDuration(),
+            "typ" => $this->getTyp(),
             "user" => false
         ];
         if ($this->getTime()) {
@@ -98,7 +102,7 @@ class extSprechstundeModelSlot
 
         $where = '';
         if ($user_id) {
-            $where .= 'WHERE user_id = '.(int)$user_id;
+            $where .= 'WHERE state = 1 AND user_id = '.(int)$user_id;
         } else {
             return false;
         }
@@ -117,7 +121,7 @@ class extSprechstundeModelSlot
     public static function getAll() {
 
         $ret =  [];
-        $dataSQL = DB::getDB()->query("SELECT * FROM ext_sprechstunde_slots ");
+        $dataSQL = DB::getDB()->query("SELECT * FROM ext_sprechstunde_slots WHERE state = 1 ");
         while ($data = DB::getDB()->fetch_array($dataSQL, true)) {
             $ret[] = new self($data);
         }
@@ -127,10 +131,26 @@ class extSprechstundeModelSlot
     /**
      * @return Array[]
      */
-    public static function getByTeachers($teachers = array()) {
+    public static function getByID($id = false) {
+
+        if (!(int)$id) {
+            return false;
+        }
+        $dataSQL = DB::getDB()->query("SELECT * FROM ext_sprechstunde_slots WHERE id = ".(int)$id);
+        while ($data = DB::getDB()->fetch_array($dataSQL, true)) {
+            return new self($data);
+        }
+        return false;
+    }
+
+    /**
+     * @return Array[]
+     */
+    public static function getByTeachers($teachers = array(), $type = false) {
 
         $ret =  [];
         $where = '';
+
         if ($teachers && count($teachers) > 0) {
             foreach($teachers as $key => $teacher) {
                 if ($where) {
@@ -138,11 +158,28 @@ class extSprechstundeModelSlot
                 }
                 $where .= 'user_id = '.(int)$key;
             }
+            $where = '('.$where.')';
         } else {
             return false;
         }
 
-        $dataSQL = DB::getDB()->query("SELECT * FROM ext_sprechstunde_slots WHERE ".$where);
+        if ($type) {
+            if ($where) {
+                $where .= ' AND ';
+            }
+            $where .= "typ LIKE '%";
+            if ($type == 'schueler') {
+                $where .= '"schueler"';
+            } else if ($type == 'eltern') {
+                $where .= '"eltern"';
+            }
+            $where .= ":true%'";
+        }
+
+        //echo "SELECT * FROM ext_sprechstunde_slots WHERE ".$where;
+        //exit;
+
+        $dataSQL = DB::getDB()->query("SELECT * FROM ext_sprechstunde_slots WHERE state = 1 AND ".$where);
         while ($data = DB::getDB()->fetch_array($dataSQL, true)) {
             $ret[] = new self($data);
         }

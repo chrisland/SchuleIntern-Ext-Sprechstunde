@@ -31,7 +31,7 @@ class cancelSlot extends AbstractRest {
         }
 
         $acl = $this->getAcl();
-        if ((int)$acl['rights']['delete'] !== 1) {
+        if ((int)$acl['rights']['delete'] !== 1 && (int)DB::getSession()->getUser()->isAnyAdmin() !== 1) {
             return [
                 'error' => true,
                 'msg' => 'Kein Zugriff'
@@ -54,7 +54,8 @@ class cancelSlot extends AbstractRest {
             ];
         }
 
-        if (!DB::getDB()->query("DELETE FROM ext_sprechstunde_slots WHERE id = " . (int)$input['id']  )) {
+        if (!DB::getDB()->query("UPDATE ext_sprechstunde_slots SET state = 0 WHERE id = " . (int)$input['id']  )) {
+        //if (!DB::getDB()->query("DELETE FROM ext_sprechstunde_slots WHERE id = " . (int)$input['id']  )) {
             return [
                 'error' => true,
                 'msg' => 'Fehler beim Entfernen!'

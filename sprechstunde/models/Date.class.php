@@ -90,7 +90,7 @@ class extSprechstundeModelDate
 
 
         $day_start = date('Y-m-d',(int)$week_start + (0 * 86400));
-        $day_end = date('Y-m-d',(int)$week_start + (7 * 86400));
+        $day_end = date('Y-m-d',(int)$week_start + (6 * 86400));
 
         $where = '';
         if ($day_start && $day_end) {
@@ -109,14 +109,76 @@ class extSprechstundeModelDate
     /**
      * @return Array[]
      */
-    public static function getAll() {
+    public static function getBySlotID($slot_id = false) {
 
+        if (!(int)$slot_id) {
+            return false;
+        }
         $ret =  [];
-        $dataSQL = DB::getDB()->query("SELECT * FROM ext_sprechstunde_slots ");
+        $dataSQL = DB::getDB()->query("SELECT * FROM ext_sprechstunde_dates WHERE slot_id = ".(int)$slot_id);
         while ($data = DB::getDB()->fetch_array($dataSQL, true)) {
             $ret[] = new self($data);
         }
         return $ret;
+    }
+
+    /**
+     * @return Array[]
+     */
+    public static function getByUserID($user_id = false) {
+
+        if (!(int)$user_id) {
+            return false;
+        }
+        $ret =  [];
+        $dataSQL = DB::getDB()->query("SELECT * FROM ext_sprechstunde_dates WHERE user_id = ".(int)$user_id);
+        while ($data = DB::getDB()->fetch_array($dataSQL, true)) {
+            $ret[] = new self($data);
+        }
+        return $ret;
+    }
+
+
+    /**
+     * @return Array[]
+     */
+    public static function getMyInFuture($user_id = false) {
+
+
+        if (!(int)$user_id) {
+            return false;
+        }
+
+        $today = date('Y-m-d',time());
+        $count =  0;
+
+
+        // Selbst gebuchte Dates
+        $where = 'WHERE user_id = '.(int)$user_id.' AND date >=  DATE "'.$today.'"';
+        $dataSQL = DB::getDB()->query("SELECT id FROM ext_sprechstunde_dates ".$where);
+        while ($data = DB::getDB()->fetch_array($dataSQL, true)) {
+            if ($data['id']) {
+                $count++;
+            }
+        }
+
+
+        // meine Slots mit passenden Dates
+        $where = 'WHERE user_id = '.(int)$user_id;
+        $dataSQL = DB::getDB()->query("SELECT id FROM ext_sprechstunde_slots ".$where);
+        while ($data = DB::getDB()->fetch_array($dataSQL, true)) {
+            $where2 = 'WHERE id = '.(int)$data['id'].' AND date >=  DATE "'.$today.'"';
+            $dataSQL2 = DB::getDB()->query("SELECT id FROM ext_sprechstunde_dates ".$where2);
+            while ($data2 = DB::getDB()->fetch_array($dataSQL2, true)) {
+                $count++;
+            }
+        }
+
+
+
+        return $count;
+
+
     }
 
 

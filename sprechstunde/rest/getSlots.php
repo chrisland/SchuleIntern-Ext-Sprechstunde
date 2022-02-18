@@ -7,6 +7,14 @@ class getSlots extends AbstractRest {
 	public function execute($input, $request) {
 
 
+        $acl = $this->getAcl();
+        if ((int)$acl['rights']['read'] !== 1 && (int)DB::getSession()->getUser()->isAnyAdmin() !== 1 ) {
+            return [
+                'error' => true,
+                'msg' => 'Kein Zugriff'
+            ];
+        }
+
         $userID = DB::getSession()->getUser()->getUserID();
         if (!$userID) {
             return [

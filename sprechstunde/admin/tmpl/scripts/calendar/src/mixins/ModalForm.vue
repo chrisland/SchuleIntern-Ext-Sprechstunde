@@ -5,7 +5,7 @@
       <button class="si-modal-btn-close" v-on:click="handlerClose"></button>
       <div class="si-modal-content">
 
-        <Form v-bind:showDays="showDays" v-bind:formData="formData" v-bind:item="item"></Form>
+        <Form v-if="slot" v-bind:slot="slot" v-bind:day="day"></Form>
 
       </div>
     </div>
@@ -27,21 +27,19 @@ export default {
   },
   data() {
     return {
-      open: false,
-      item: false
+      open: false
     };
   },
   props: {
-    showDays: Array,
-    formData: Array
+    slot: Object,
+    day: Object
   },
   created: function () {
     var that = this;
     EventBus.$on('modal-form--open', data => {
+      that.slot = data.slot;
+      that.day = data.day;
       that.open = true;
-      if (data.item) {
-        that.item = data.item;
-      }
     });
     EventBus.$on('modal-form--close', data => {
       that.open = false;

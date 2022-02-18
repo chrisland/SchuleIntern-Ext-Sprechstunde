@@ -8,27 +8,30 @@
         <table class="si-table">
           <tbody>
           <tr>
-            <td><label>Titel</label></td>
-            <td>{{item.title}}</td>
+            <td><label>Raum</label></td>
+            <td>{{unit.room}}</td>
           </tr>
           <tr>
-            <td><label>Uhrzeit</label></td>
-            <td>{{item.time}}</td>
+            <td><label>Betreff</label></td>
+            <td>{{unit.subject}}</td>
           </tr>
           <tr>
-            <td><label>Dauer</label></td>
-            <td>{{item.duration}}</td>
+            <td><label>Lehrer</label></td>
+            <td>{{unit.teacher}}</td>
           </tr>
-
+          <tr>
+            <td><label>Klasse</label></td>
+            <td>{{unit.grade}}</td>
+          </tr>
+          <tr class="text-small">
+            <td><label>Erstellt</label></td>
+            <td>{{unit.createdTime}}</td>
+          </tr>
           </tbody>
         </table>
 
-        <span v-if="acl.delete == 1 && item.createdSelf" class="margin-r-m" >
-          <button v-if="!cancelSecond " @click="cancelItemFirst" class="si-btn"><i class="fa fa-save"></i> Entfernen</button>
-          <button v-if="cancelSecond" @click="cancelItemSecond" class="si-btn si-btn-red"><i class="fa fa-save"></i> Wirklich Entfernen?</button>
-        </span>
-
-        <button v-if="acl.write == 1 && item.createdSelf" @click="editItem" class="si-btn"><i class="fa fa-edit"></i> Bearbeiten</button>
+        <button v-if="unit.createdSelf && !cancelSecond " @click="cancelItemFirst" class="si-btn"><i class="fa fa-save"></i> Stornieren</button>
+        <button v-if="unit.createdSelf && cancelSecond" @click="cancelItemSecond" class="si-btn si-btn-red"><i class="fa fa-save"></i> Stornieren</button>
 
       </div>
     </div>
@@ -51,16 +54,14 @@ export default {
     };
   },
   props: {
-    item: Object,
-    acl: Object
+    unit: Object
   },
   created: function () {
 
     var that = this;
     EventBus.$on('modal-item--open', data => {
-      that.item = data.slot;
+      that.unit = data.unit;
       that.open = true;
-      that.cancelSecond = false;
     });
     EventBus.$on('modal-item--close', data => {
       that.open = false;
@@ -75,16 +76,9 @@ export default {
       this.cancelSecond = true;
     },
     cancelItemSecond: function () {
-      EventBus.$emit('item--cancel', {
-        item: this.item
-      });
-
-    },
-    editItem: function () {
-
-      this.handlerClose();
-      EventBus.$emit('modal-form--open', {
-        item: this.item
+      //console.log(this.unit);
+      EventBus.$emit('form--cancel', {
+        unit: this.unit
       });
 
     }

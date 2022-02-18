@@ -1,9 +1,9 @@
 <?php
 
-class extSprechstundeDefault extends AbstractPage {
+class extSprechstundeAdminCalendar extends AbstractPage {
 	
 	public static function getSiteDisplayName() {
-		return '<i class="fas fa-people-arrows"></i> Sprechstunde - Kalender';
+		return '<i class="fas fa-people-arrows"></i> Sprechstunde - Admin Kalender';
 	}
 
 	public function __construct($request = [], $extension = []) {
@@ -11,19 +11,16 @@ class extSprechstundeDefault extends AbstractPage {
 		$this->checkLogin();
 	}
 
-
 	public function execute() {
 
-        //$_request = $this->getRequest();
-
-        //print_r($_request);
-        $acl = $this->getAcl();
-        if ((int)$acl['rights']['read'] !== 1) {
-            new errorPage('Kein Zugriff');
-        }
-        //print_r( $acl );
+		//$this->getRequest();
+		//$this->getAcl();
 
         $user = DB::getSession()->getUser();
+
+        if ( !$user->isAnyAdmin() ) {
+            new errorPage('Kein Zugriff');
+        }
 
         //print_r($user->getUserTyp(true));
 
@@ -37,16 +34,15 @@ class extSprechstundeDefault extends AbstractPage {
             'So' => DB::getSettings()->getValue('extSprechstunde-day-so') || 0,
         );
 
-        $info = DB::getSettings()->getValue('extSprechstunde-calendar-info-head');
-
 		$this->render([
-			"tmpl" => "default",
-            "scripts" => [
-                PATH_EXTENSION.'tmpl/scripts/default/dist/main.js'
-            ],
-            "vars" => [
-                "info" => $info
-            ],
+			"tmplHTML" => '<div class="box"><div class="box-body"><div id=app></div></div></div>',
+			"scripts" => [
+                PATH_EXTENSION.'tmpl/scripts/calendar/dist/main.js'
+			],
+			"data" => [
+				"selfURL" => URL_SELF,
+				"settings" => $this->getSettings()
+			],
             "data" => [
                 "apiURL" => "rest.php/sprechstunde",
                 "showDays" => $showDays,
@@ -55,10 +51,12 @@ class extSprechstundeDefault extends AbstractPage {
                     "typ" => $user->getUserTyp(true),
                     "id" => $user->getUserID()
                 ]
-		    ]
-        ]);
+            ]
+
+		]);
 
 	}
+
 
 
 }

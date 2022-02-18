@@ -32,6 +32,14 @@
             <div class="padding-t-m">
               {{slot.title}}
             </div>
+            <div class="padding-t-m" v-if="slot.typ">
+              <button
+                  v-if="slot.typ.schueler"
+                  class="si-btn si-btn-off"><i class="fa fas fa-user"></i> Schüler</button>
+              <button
+                  v-if="slot.typ.eltern"
+                  class="si-btn si-btn-off"><i class="fa fas fa-users"></i> Eltern</button>
+            </div>
 
           </div>
 

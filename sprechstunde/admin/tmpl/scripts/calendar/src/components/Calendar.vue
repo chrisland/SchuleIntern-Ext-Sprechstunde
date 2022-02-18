@@ -36,36 +36,35 @@
 
 
             <span v-if="day.slots">
-              <span v-bind:key="s" v-for="(slot, s) in day.slots" >
+              <div v-bind:key="s" v-for="(slot, s) in day.slots" class="si-box">
 
-                <div v-if="slot.dateSet != true" class="si-box">
+                <div class="flex-row">
+                  <div class="flex-1 text-big-m">{{slot.time}}</div>
+                  <div class="flex-1 flex flex-end text-right">{{slot.duration}} min</div>
+                </div>
+                <div class="padding-t-m padding-b-m">
+                  {{slot.title}}
+                </div>
+                <User  v-bind:data="slot.user"></User>
 
-                  <div class="flex-row">
-                    <div class="flex-1 text-big-m">{{slot.time}}</div>
-                    <div class="flex-1 flex flex-end text-right">{{slot.duration}} min</div>
-                  </div>
-                  <div class="padding-t-m padding-b-m">
-                    {{slot.title}}
-                  </div>
-                  <User v-if="slot.user_id != userSelf.id" v-bind:data="slot.user"></User>
-
-                  <div v-if="slot.date" class="si-box si-box-green">
-                    <h4><i class="far fa-calendar-check margin-r-s"></i> Termin</h4>
-                    <User v-bind:data="slot.date.user"></User>
-                    <div v-if="slot.date.info" class="padding-t-m">
-                      <i class="fas fa-info-circle"></i> {{slot.date.info}}
-                    </div>
-                  </div>
-
-                  <div v-else class="text-right padding-t-s">
-                    <button v-if="isFuture(day.day) && slot.user_id != userSelf.id" class="si-btn"
-                              v-on:click.stop="openForm(day.day, slot)">
-                      <i class="fa fa-plus"></i> Buchen
-                    </button>
+                <div v-if="slot.date" class="si-box si-box-green">
+                  <h4><i class="far fa-calendar-check margin-r-s"></i> Termin</h4>
+                  <User v-bind:data="slot.date.user"></User>
+                  <div v-if="slot.date.info" class="padding-t-m">
+                    <i class="fas fa-info-circle"></i> {{slot.date.info}}
                   </div>
                 </div>
 
-              </span>
+                <!--
+                <div v-else class="text-right padding-t-s">
+                  <button v-if="slot.user_id != userSelf.id" class="si-btn"
+                            v-on:click.stop="openForm(day.day, slot)">
+                    <i class="fa fa-plus"></i> Buchen
+                  </button>
+                </div>
+                -->
+
+              </div>
             </span>
 
           </td>
@@ -159,12 +158,6 @@ export default {
     },
     isToday: function (day) {
       if (this.today.isSame(day, 'day')) {
-        return true;
-      }
-      return false;
-    },
-    isFuture: function (day) {
-      if (this.today.isBefore(day, 'day')) {
         return true;
       }
       return false;
