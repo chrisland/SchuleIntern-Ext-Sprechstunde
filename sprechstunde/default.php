@@ -18,7 +18,7 @@ class extSprechstundeDefault extends AbstractPage {
 
         //print_r($_request);
         $acl = $this->getAcl();
-        if ((int)$acl['rights']['read'] !== 1) {
+        if ((int)$acl['rights']['read'] !== 1 && (int)DB::getSession()->getUser()->isAnyAdmin() !== 1 ) {
             new errorPage('Kein Zugriff');
         }
         //print_r( $acl );
