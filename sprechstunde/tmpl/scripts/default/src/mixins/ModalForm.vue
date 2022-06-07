@@ -5,7 +5,7 @@
       <button class="si-modal-btn-close" v-on:click="handlerClose"></button>
       <div class="si-modal-content">
 
-        <Form v-if="slot" v-bind:slot="slot" v-bind:day="day"></Form>
+        <Form v-if="slot" v-bind:slot="slot" v-bind:day="day"  v-bind:userSelf="userSelf"></Form>
 
       </div>
     </div>
@@ -32,7 +32,8 @@ export default {
   },
   props: {
     slot: Object,
-    day: Object
+    day: Object,
+    userSelf: Array
   },
   created: function () {
     var that = this;

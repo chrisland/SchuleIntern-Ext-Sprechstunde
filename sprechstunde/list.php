@@ -21,6 +21,8 @@ class extSprechstundeList extends AbstractPage {
             new errorPage('Kein Zugriff');
         }
 
+        $user = DB::getSession()->getUser();
+
 		$this->render([
 			"tmpl" => "default",
             "scripts" => [
@@ -28,7 +30,11 @@ class extSprechstundeList extends AbstractPage {
             ],
             "data" => [
                 "apiURL" => "rest.php/sprechstunde",
-                "acl" => $acl['rights']
+                "acl" => $acl['rights'],
+                "userSelf" => [
+                    "typ" => $user->getUserTyp(true),
+                    "id" => $user->getUserID()
+                ]
 		    ]
         ]);
 

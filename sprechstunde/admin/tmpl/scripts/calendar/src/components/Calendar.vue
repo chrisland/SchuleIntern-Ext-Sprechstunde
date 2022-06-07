@@ -49,20 +49,17 @@
 
                 <div v-if="slot.date" class="si-box si-box-green">
                   <h4><i class="far fa-calendar-check margin-r-s"></i> Termin</h4>
-                  <User v-bind:data="slot.date.user"></User>
+                  <button v-if="slot.date.user_id == slot.user_id" class="si-btn si-btn-red">
+                    <i class="fa fa-plus"></i> geblockt
+                  </button>
+                  <User v-else v-bind:data="slot.date.user"></User>
+
                   <div v-if="slot.date.info" class="padding-t-m">
                     <i class="fas fa-info-circle"></i> {{slot.date.info}}
                   </div>
                 </div>
 
-                <!--
-                <div v-else class="text-right padding-t-s">
-                  <button v-if="slot.user_id != userSelf.id" class="si-btn"
-                            v-on:click.stop="openForm(day.day, slot)">
-                    <i class="fa fa-plus"></i> Buchen
-                  </button>
-                </div>
-                -->
+
 
               </div>
             </span>

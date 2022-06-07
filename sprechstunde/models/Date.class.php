@@ -131,7 +131,7 @@ class extSprechstundeModelDate
             return false;
         }
         $ret =  [];
-        $dataSQL = DB::getDB()->query("SELECT * FROM ext_sprechstunde_dates WHERE user_id = ".(int)$user_id);
+        $dataSQL = DB::getDB()->query("SELECT * FROM ext_sprechstunde_dates WHERE block = 0 AND user_id = ".(int)$user_id);
         while ($data = DB::getDB()->fetch_array($dataSQL, true)) {
             $ret[] = new self($data);
         }
@@ -154,7 +154,7 @@ class extSprechstundeModelDate
 
 
         // Selbst gebuchte Dates
-        $where = 'WHERE user_id = '.(int)$user_id.' AND date >=  DATE "'.$today.'"';
+        $where = 'WHERE block = 0 AND user_id = '.(int)$user_id.' AND date >=  DATE "'.$today.'"';
         $dataSQL = DB::getDB()->query("SELECT id FROM ext_sprechstunde_dates ".$where);
         while ($data = DB::getDB()->fetch_array($dataSQL, true)) {
             if ($data['id']) {
@@ -167,7 +167,7 @@ class extSprechstundeModelDate
         $where = 'WHERE user_id = '.(int)$user_id;
         $dataSQL = DB::getDB()->query("SELECT id FROM ext_sprechstunde_slots ".$where);
         while ($data = DB::getDB()->fetch_array($dataSQL, true)) {
-            $where2 = 'WHERE id = '.(int)$data['id'].' AND date >=  DATE "'.$today.'"';
+            $where2 = 'WHERE block = 0 AND id = '.(int)$data['id'].' AND date >=  DATE "'.$today.'"';
             $dataSQL2 = DB::getDB()->query("SELECT id FROM ext_sprechstunde_dates ".$where2);
             while ($data2 = DB::getDB()->fetch_array($dataSQL2, true)) {
                 $count++;

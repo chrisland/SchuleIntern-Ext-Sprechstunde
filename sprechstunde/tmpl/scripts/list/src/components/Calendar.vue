@@ -25,7 +25,10 @@
                   class="si-btn si-btn-off margin-r-m">Eltern</button>
 
         </td>
-        <td class=""><User v-bind:data="date.user"></User></td>
+        <td class="">
+          <User v-if="date.user.id != userSelf.id " v-bind:data="date.user"></User>
+          <button v-else-if="date.user.id == userSelf.id" class="si-btn si-btn-red"><i class="fa fa-ban"></i> geblockt</button>
+        </td>
         <td class="">{{date.info}}</td>
       </tr>
       </tbody>
@@ -50,7 +53,7 @@ export default {
   },
   data() {
     return {
-
+      userSelf: globals.userSelf
     }
   },
   created: function () {

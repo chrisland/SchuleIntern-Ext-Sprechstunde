@@ -31,6 +31,16 @@ class saveDate extends AbstractRest {
             ];
         }
 
+        include_once PATH_EXTENSION . 'models' . DS . 'Slot.class.php';
+        $slot = extSprechstundeModelSlot::getByID($input['slot_id']);
+
+        if (!$slot || !$slot->getUserID() ) {
+            return [
+                'error' => true,
+                'msg' => 'Missing Slot'
+            ];
+        }
+
         //$time = DateTime::createFromFormat('H:i', $input['timeHour'].':'.$input['timeMinute'] );
         //$time_str = $time->format('H:i');
 
@@ -38,17 +48,23 @@ class saveDate extends AbstractRest {
         if (!$info || $info == 'undefined') {
             $info = '';
         }
+        $block = 0;
+        if ($userID == $slot->getUserID()) {
+            $block = 1;
+        }
         if (!DB::getDB()->query("INSERT INTO ext_sprechstunde_dates
 				(
 				    date,
 					slot_id,
 					info,
-					user_id
+					user_id,
+				    block
 				) values(
 					'" . DB::getDB()->escapeString($input['date']) . "',
 					'" . (int)$input['slot_id'] . "',
 					'" . $info . "',
-					$userID
+					$userID,
+					$block
 				)
 		    ")) {
             return [
@@ -103,7 +119,9 @@ class saveDate extends AbstractRest {
     public function needsSystemAuth() {
         return false;
     }
-
+    public function aclModuleName() {
+        return 'ext_sprechstunde';
+    }
 }	
 
 ?>

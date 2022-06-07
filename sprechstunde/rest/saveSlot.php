@@ -4,9 +4,7 @@ class saveSlot extends AbstractRest {
 	
 	protected $statusCode = 200;
 
-    public function aclModuleName() {
-        return 'ext_sprechstunde';
-    }
+
 
 	public function execute($input, $request) {
 
@@ -152,7 +150,9 @@ class saveSlot extends AbstractRest {
     public function needsSystemAuth() {
         return false;
     }
-
+    public function aclModuleName() {
+        return 'ext_sprechstunde';
+    }
 }	
 
 ?>

@@ -25,7 +25,14 @@
         <input type="text"  v-model="form.info" maxlength="250" />
       </li>
       <li>
-        <button @click="submitForm" class="si-btn"><i class="fa fa-save"></i> Buchen</button>
+
+        <button v-if="form.user_id != userSelf.id" @click="submitForm" class="si-btn">
+          <i class="fa fa-save"></i> Buchen</button>
+
+        <button v-else-if="form.user_id == userSelf.id" @click="submitForm" class="si-btn si-btn-red">
+          <i class="fa fa-ban"></i> Blocken
+        </button>
+
       </li>
     </ul>
   </div>
@@ -43,7 +50,8 @@ export default {
   name: 'Form',
   props: {
     slot: Object,
-    day: Object
+    day: Object,
+    userSelf: Array
   },
   data(){
     return {

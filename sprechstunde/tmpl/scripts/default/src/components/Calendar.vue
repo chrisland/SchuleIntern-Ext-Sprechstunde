@@ -47,8 +47,8 @@
                   <div class="padding-t-m padding-b-m">
                     {{slot.title}}
                   </div>
-                  <User v-if="slot.user_id != userSelf.id" v-bind:data="slot.user"></User>
 
+                  <User v-if="slot.user_id != userSelf.id" v-bind:data="slot.user"></User>
                   <div v-if="slot.date" class="si-box si-box-green">
                     <h4><i class="far fa-calendar-check margin-r-s"></i> Termin</h4>
                     <User v-bind:data="slot.date.user"></User>
@@ -56,11 +56,14 @@
                       <i class="fas fa-info-circle"></i> {{slot.date.info}}
                     </div>
                   </div>
-
                   <div v-else class="text-right padding-t-s">
                     <button v-if="isFuture(day.day) && slot.user_id != userSelf.id" class="si-btn"
                               v-on:click.stop="openForm(day.day, slot)">
                       <i class="fa fa-plus"></i> Buchen
+                    </button>
+                    <button v-else-if="isFuture(day.day) && slot.user_id == userSelf.id" class="si-btn"
+                            v-on:click.stop="openForm(day.day, slot)">
+                      <i class="fa fa-ban"></i> Blocken
                     </button>
                   </div>
                 </div>
@@ -76,7 +79,7 @@
 
     </div>
 
-    <ModalForm v-bind:room="room"></ModalForm>
+    <ModalForm v-bind:room="room" v-bind:userSelf="userSelf"></ModalForm>
     <ModalItem ></ModalItem>
 
   </div>

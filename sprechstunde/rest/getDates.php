@@ -161,7 +161,9 @@ class getDates extends AbstractRest {
     public function needsSystemAuth() {
         return false;
     }
-
+    public function aclModuleName() {
+        return 'ext_sprechstunde';
+    }
 }	
 
 ?>
