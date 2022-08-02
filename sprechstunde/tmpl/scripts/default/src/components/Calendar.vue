@@ -61,7 +61,7 @@
                               v-on:click.stop="openForm(day.day, slot)">
                       <i class="fa fa-plus"></i> Buchen
                     </button>
-                    <button v-else-if="isFuture(day.day) && slot.user_id == userSelf.id" class="si-btn"
+                    <button v-else-if="isTodayOrFuture(day.day) && slot.user_id == userSelf.id" class="si-btn"
                             v-on:click.stop="openForm(day.day, slot)">
                       <i class="fa fa-ban"></i> Blocken
                     </button>
@@ -168,6 +168,12 @@ export default {
     },
     isFuture: function (day) {
       if (this.today.isBefore(day, 'day')) {
+        return true;
+      }
+      return false;
+    },
+    isTodayOrFuture: function (day) {
+      if (this.isToday(day) || this.isFuture(day)) {
         return true;
       }
       return false;
