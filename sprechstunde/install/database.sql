@@ -4,6 +4,7 @@ CREATE TABLE `ext_sprechstunde_dates` (
   `slot_id` int(11) DEFAULT NULL,
   `info` varchar(255) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
+  `block` int(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
